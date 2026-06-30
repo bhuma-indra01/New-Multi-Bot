@@ -15,9 +15,7 @@ const db = require("pro.db");
 
 const groq = require("groq-sdk");
 const { ai_prompt } = require("../../config/bot");
-const Groq = new groq.Groq({
-  apiKey: process.env.GROQ
-})
+const Groq = process.env.GROQ ? new groq.Groq({ apiKey: process.env.GROQ }) : null;
 /**
  * 
  * @param {Discord.Client} client 

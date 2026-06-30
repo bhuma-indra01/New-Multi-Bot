@@ -1,11 +1,7 @@
 const Discord = require('discord.js');
 const fs = require('fs');
 
-const { Manager } = require("erela.js");
-const Spotify = require("erela.js-spotify");
-const Facebook = require("erela.js-facebook");
-const Deezer = require("erela.js-deezer");
-const AppleMusic = require("erela.js-apple");
+const { Manager } = require("magmastream");
 
 // Discord client
 const client = new Discord.Client({
@@ -50,32 +46,56 @@ const client = new Discord.Client({
 });
 
 
-const plugins = [
-    new AppleMusic(),
-    new Deezer(),
-    new Facebook(),
-]
-const clientID = process.env.SPOTIFY_CLIENT_ID;
-const clientSecret = process.env.SPOTIFY_CLIENT_SECRET;
-
-if (clientID && clientSecret) plugins.push(
-    new Spotify({
-        clientID,
-        clientSecret,
-    })
-)
+// Build Lavalink node list — custom env node takes priority, then public fallbacks
+const lavalinkNodes = process.env.LAVALINK_HOST
+    ? [
+        {
+            identifier: "custom",
+            host: process.env.LAVALINK_HOST,
+            port: parseInt(process.env.LAVALINK_PORT) || 2333,
+            password: process.env.LAVALINK_PASSWORD || "youshallnotpass",
+            secure: process.env.LAVALINK_SECURE === "true",
+            retryAmount: 5,
+            retryDelay: 15000
+        }
+    ]
+    : [
+        {
+            identifier: "lavalink-us",
+            host: "us.lavalink.heavencloud.in",
+            port: 443,
+            password: "heavencloud",
+            secure: true,
+            retryAmount: 2,
+            retryDelay: 60000
+        },
+        {
+            identifier: "lavalink-eu",
+            host: "eu.lavalink.heavencloud.in",
+            port: 443,
+            password: "heavencloud",
+            secure: true,
+            retryAmount: 2,
+            retryDelay: 60000
+        },
+        {
+            identifier: "lavalink-sg",
+            host: "sg.lavalink.heavencloud.in",
+            port: 443,
+            password: "heavencloud",
+            secure: true,
+            retryAmount: 2,
+            retryDelay: 60000
+        }
+    ];
 
 // Lavalink client
 client.player = new Manager({
-    plugins,
-    nodes: [
-        {
-            host: process.env.LAVALINK_HOST || "lava.link",
-            port: parseInt(process.env.LAVALINK_PORT) || 80,
-            password: process.env.LAVALINK_PASSWORD || "CorwinDev",
-            secure: Boolean(process.env.LAVALINK_SECURE) || false
-        },
-    ],
+    nodes: lavalinkNodes,
+    playNextOnEnd: true,
+    autoPlay: true,
+    getUser: (userId) => client.users.cache.get(userId) ?? null,
+    getGuild: (guildId) => client.guilds.cache.get(guildId) ?? null,
     send(id, payload) {
         const guild = client.guilds.cache.get(id);
         if (guild) guild.shard.send(payload);

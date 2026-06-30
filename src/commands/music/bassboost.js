@@ -34,7 +34,7 @@ module.exports = async (client, interaction, args) => {
             ({ band: i, gain: levels[level] })
         );
 
-    player.setEQ(...bands);
+    player.setEqualizer(bands);
 
     client.succNormal({
         text: `Bass boost level adjusted to **level ${level}**`,

@@ -52,7 +52,7 @@ module.exports = async (client, interaction, args) => {
 
     const res = await player.search(query, interaction.user);
 
-    if (res.loadType === 'LOAD_FAILED') {
+    if (res.loadType === 'error') {
         if (!player.queue.current) player.destroy();
         return client.errNormal({
             error: `Error getting music. Please try again in a few minutes`,
@@ -61,7 +61,7 @@ module.exports = async (client, interaction, args) => {
     }
 
     switch (res.loadType) {
-        case 'NO_MATCHES': {
+        case 'empty': {
             if (!player.queue.current) player.destroy()
             await client.errNormal({
                 error: `No music was found`,
@@ -70,7 +70,7 @@ module.exports = async (client, interaction, args) => {
             break;
         }
 
-        case 'TRACK_LOADED': {
+        case 'track': {
             const track = res.tracks[0];
             await player.queue.add(track);
 
@@ -106,7 +106,7 @@ module.exports = async (client, interaction, args) => {
             break;
         }
 
-        case 'PLAYLIST_LOADED': {
+        case 'playlist': {
             await player.queue.add(res.tracks);
             if (!player.playing && !player.paused) player.play()
             else {
@@ -115,7 +115,7 @@ module.exports = async (client, interaction, args) => {
             break;
         }
 
-        case 'SEARCH_RESULT': {
+        case 'search': {
             let max = 5, collected, filter = (i) => i.user.id === interaction.user.id;
             if (res.tracks.length < max) max = res.tracks.length;
 
