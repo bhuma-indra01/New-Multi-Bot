@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: discord-bot
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: DISCORD_TOKEN
+        sync: false
+      - key: MONGO_TOKEN
+        sync: false
+      - key: DISCORD_ID
+        sync: false
+      - key: OWNER_ID
+        sync: false
+      - key: GIPHY_TOKEN
+        sync: false
+      - key: GROQ
+        sync: false
+      - key: WEBHOOK_ID
+        sync: false
+      - key: WEBHOOK_TOKEN
+        sync: false
+      - key: DISCORD_STATUS
+        value: "❓┆/help, 💻┆My Server, 🎉┆400+ commands"
+      - key: LAVALINK_HOST
+        sync: false
+      - key: LAVALINK_PORT
+        value: "2333"
+      - key: LAVALINK_PASSWORD
+        sync: false
+      - key: LAVALINK_SECURE
+        value: "false"
