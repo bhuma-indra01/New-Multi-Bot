@@ -1,10 +1,13 @@
 services:
   - type: web
     name: discord-bot
-    runtime: docker
-    dockerfilePath: ./Dockerfile
+    env: node
     plan: free
+    buildCommand: npm install
+    startCommand: npm start
     envVars:
+      - key: NODE_VERSION
+        value: "20.20.0"
       - key: DISCORD_TOKEN
         sync: false
       - key: MONGO_TOKEN
@@ -31,3 +34,7 @@ services:
         sync: false
       - key: LAVALINK_SECURE
         value: "false"
+      - key: SPOTIFY_CLIENT_ID
+        sync: false
+      - key: SPOTIFY_CLIENT_SECRET
+        sync: false
